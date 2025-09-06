@@ -57,7 +57,7 @@ userSchema.pre("save",async function(next) {
     //we will only change pass when its modified,not always whenever user changes any other fields.
     if(!this.isModified("password")) return next()
 
-    this.password=bcrypt.hash(this.password,10)// The number represents how much round password is to be hashed 
+    this.password=await bcrypt.hash(this.password,10)// The number represents how much round password is to be hashed 
     next()
 })
 
