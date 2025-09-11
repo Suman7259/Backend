@@ -247,7 +247,7 @@ const getCurrentUser=asyncHandler(async(req,res)=>{
 )
 })
 
-const updateUserDetails = asyncHandler(async(req,res)=>{
+const updateAccountDetails = asyncHandler(async(req,res)=>{
     const {fullName,email}=req.body
 
     if(!fullName || !email){
@@ -436,10 +436,18 @@ const getWatchHistory=asyncHandler(async(req,res)=>{
                         }
                     },
                     {
+                        //$lookup always returns an array, even if there’s only one match.  
+                        //So each video’s owner field becomes like this:
+                        // "owner": [
+                        //            {"fullName": "Alice", "username": "alice123", "avatar": "alice.png" }   ]
+                        // 
+                        //$addFields with $first fixes it:
+                        //This extracts the first (and only) element of the array.Now owner is just an object:
+                        //"owner": { "fullName": "Alice", "username": "alice123", "avatar": "alice.png" }
                         $addFields:{
                             owner:{
                                  $first:"$owner"
-                            }                
+                            } 
                         }
                     }
                 ]
@@ -459,7 +467,8 @@ export { registerUser,
          refreshAccessToken,
          changeCurrentPassword,
          getCurrentUser,
-         updateUserDetails,
+         updateAccountDetails,
          updateUserAvatar ,
          updateUserCoverImage,
-         userChannelProfile }
+         userChannelProfile ,
+         getWatchHistory}
